@@ -15,6 +15,22 @@ router.get('/', async (req, res) => {
     }
 });
 
+// @desc    Get project by ID
+// @route   GET /api/projects/:id
+router.get('/:id', async (req, res) => {
+    try {
+        const project = await Project.findById(req.params.id).populate('user', 'name');
+        if (project) {
+            res.json(project);
+        } else {
+            res.status(404).json({ message: 'Project not found' });
+        }
+    } catch (error) {
+        console.error('❌ PROJECT FETCH ERROR:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 // @desc    Create a project
 // @route   POST /api/projects
 router.post('/', protect, async (req, res) => {

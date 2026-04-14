@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ExternalLink, Github, Trophy } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Github, Trophy, Trash2 } from 'lucide-react';
 import API from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const ProjectDetail = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
+    const { user } = useAuth();
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -26,6 +29,16 @@ const ProjectDetail = () => {
         fetchProject();
     }, [id]);
 
+    const handleDelete = async () => {
+        if (!window.confirm('Are you sure you want to delete this project?')) return;
+        try {
+            await API.delete(`/projects/${id}`);
+            navigate('/');
+        } catch (error) {
+            alert('Failed to delete project');
+        }
+    };
+
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center">
             <div className="text-2xl font-orbitron animate-pulse gradient-text uppercase tracking-widest">Initializing Project Assets...</div>
@@ -40,6 +53,8 @@ const ProjectDetail = () => {
         </div>
     );
 
+    const isOwner = user && (project.user?._id === user._id || project.user === user._id);
+
     return (
         <div className="pt-24 pb-12 px-6 max-w-7xl mx-auto">
             <Link to="/" className="inline-flex items-center gap-2 text-white/60 hover:text-accent transition-colors mb-8 group">
@@ -52,7 +67,19 @@ const ProjectDetail = () => {
                     animate={{ opacity: 1, x: 0 }}
                     className="space-y-6"
                 >
-                    <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter">{project.title}</h1>
+                    <div className="flex justify-between items-start">
+                        <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter">{project.title}</h1>
+                        {isOwner && (
+                            <button 
+                                onClick={handleDelete}
+                                className="p-3 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-full transition-all"
+                                title="Delete Project"
+                            >
+                                <Trash2 size={24} />
+                            </button>
+                        )}
+                    </div>
+                    
                     <div className="flex flex-wrap gap-2 text-flex items-center">
                         <span className="px-3 py-1 bg-accent/20 border border-accent/40 rounded-full text-[10px] text-accent font-black uppercase tracking-widest">
                             {project.difficulty}

@@ -1,61 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Github, ArrowUpRight, Filter } from 'lucide-react';
+import { ExternalLink, Github, ArrowUpRight, Filter, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import API from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const Projects = () => {
+    const { user } = useAuth();
     const [projects, setProjects] = useState([]);
     const [filter, setFilter] = useState('All');
     const [loading, setLoading] = useState(true);
 
     const categories = ['All', 'Beginner', 'Intermediate', 'Advanced'];
 
+    const fetchProjects = async () => {
+        try {
+            setLoading(true);
+            const { data } = await API.get('/projects');
+            setProjects(data);
+        } catch (error) {
+            console.error("Error fetching projects", error);
+        }
+        setLoading(false);
+    };
+
     useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const { data } = await API.get('/projects');
-                setProjects(data);
-            } catch (error) {
-                console.error("Error fetching projects", error);
-                // Fallback dummy data
-                setProjects([
-                    {
-                        _id: '1',
-                        title: 'E-Commerce Platform',
-                        description: 'A full-stack mern e-commerce site with Redux and Stripe integration.',
-                        techStack: ['React', 'Node', 'MongoDB', 'Redux'],
-                        difficulty: 'Advanced',
-                        image: 'https://images.unsplash.com/photo-1557821552-17105176677c?auto=format&fit=crop&q=80&w=1600',
-                        githubRepo: 'https://github.com/Rizwan-Khan-2002',
-                        liveDemo: '#'
-                    },
-                    {
-                        _id: '2',
-                        title: 'Task Management App',
-                        description: 'Real-time collaborative task manager with Kanban board view.',
-                        techStack: ['React', 'Firebase', 'Tailwind'],
-                        difficulty: 'Intermediate',
-                        image: 'https://images.unsplash.com/photo-1540350394557-8d14678e7f91?auto=format&fit=crop&q=80&w=1600',
-                        githubRepo: 'https://github.com/Rizwan-Khan-2002',
-                        liveDemo: '#'
-                    },
-                    {
-                        _id: '3',
-                        title: 'Weather Dashboard',
-                        description: 'Elegant weather app using OpenWeather API and GSAP animations.',
-                        techStack: ['React', 'GSAP', 'API'],
-                        difficulty: 'Beginner',
-                        image: 'https://images.unsplash.com/photo-1592210454359-9043f067919b?auto=format&fit=crop&q=80&w=1600',
-                        githubRepo: 'https://github.com/Rizwan-Khan-2002',
-                        liveDemo: '#'
-                    }
-                ]);
-            }
-            setLoading(false);
-        };
         fetchProjects();
     }, []);
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this project?')) return;
+        try {
+            await API.delete(`/projects/${id}`);
+            fetchProjects();
+        } catch (error) {
+            alert('Failed to delete project');
+        }
+    };
 
     const filteredProjects = filter === 'All' 
         ? projects 
@@ -149,6 +130,19 @@ const Projects = () => {
                                                 >
                                                     <ExternalLink size={20} />
                                                 </a>
+                                                {user && (project.user?._id === user._id || project.user === user._id) && (
+                                                    <button 
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            handleDelete(project._id);
+                                                        }}
+                                                        className="hover:text-red-500 transition-colors p-2 bg-white/5 rounded-full"
+                                                        title="Delete Project"
+                                                    >
+                                                        <Trash2 size={20} />
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                         
