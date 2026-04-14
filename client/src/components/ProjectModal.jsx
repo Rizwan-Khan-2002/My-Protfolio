@@ -126,6 +126,17 @@ const ProjectModal = ({ isOpen, onClose, onSubmit, initialData = null }) => {
                                 </div>
                             </div>
 
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-gray-400">Project Image (URL)</label>
+                                <input 
+                                    type="url" name="image"
+                                    value={formData.image} onChange={handleChange}
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-secondary transition-all"
+                                    placeholder="https://images.unsplash.com/..."
+                                />
+                                <p className="text-[10px] text-gray-500 italic">Pro-tip: Upload to Imgur or PostImages and paste the direct link here.</p>
+                            </div>
+
                             <div className="pt-4 flex gap-4">
                                 <button 
                                     type="button" onClick={onClose}

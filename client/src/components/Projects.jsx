@@ -131,10 +131,22 @@ const Projects = () => {
                                                 {project.title}
                                             </h3>
                                             <div className="flex gap-4 opacity-40 group-hover:opacity-100 transition-opacity">
-                                                <a href={project.githubRepo} onClick={(e) => e.stopPropagation()} className="hover:text-accent transition-colors">
+                                                <a 
+                                                    href={project.githubRepo} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    onClick={(e) => e.stopPropagation()} 
+                                                    className="hover:text-accent transition-colors p-2 bg-white/5 rounded-full"
+                                                >
                                                     <Github size={20} />
                                                 </a>
-                                                <a href={project.liveDemo} onClick={(e) => e.stopPropagation()} className="hover:text-accent transition-colors">
+                                                <a 
+                                                    href={project.liveDemo} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    onClick={(e) => e.stopPropagation()} 
+                                                    className="hover:text-accent transition-colors p-2 bg-white/5 rounded-full"
+                                                >
                                                     <ExternalLink size={20} />
                                                 </a>
                                             </div>
