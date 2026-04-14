@@ -75,10 +75,11 @@ const ProjectDetail = () => {
                         {isOwner && (
                             <button 
                                 onClick={handleDelete}
-                                className="p-3 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-full transition-all"
+                                className="p-3 bg-red-500/20 text-red-500 border border-red-500/40 hover:bg-red-500 hover:text-white rounded-xl transition-all flex items-center gap-2 group"
                                 title="Delete Project"
                             >
-                                <Trash2 size={24} />
+                                <Trash2 size={24} className="group-hover:scale-110 transition-transform" />
+                                <span className="text-xs font-bold uppercase tracking-widest hidden md:inline">Delete Project</span>
                             </button>
                         )}
                     </div>

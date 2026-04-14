@@ -124,9 +124,10 @@ const Dashboard = () => {
                                     <div className="flex gap-2">
                                         <button 
                                             onClick={() => deleteProject(project._id)}
-                                            className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
+                                            className="p-2 text-red-500 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-all border border-red-500/20"
+                                            title="Delete Project"
                                         >
-                                            <Trash2 size={16} />
+                                            <Trash2 size={20} />
                                         </button>
                                     </div>
                                 </div>

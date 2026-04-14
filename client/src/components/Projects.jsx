@@ -140,7 +140,7 @@ const Projects = () => {
                                                             e.stopPropagation();
                                                             handleDelete(project._id);
                                                         }}
-                                                        className="hover:text-red-500 transition-colors p-2 bg-white/5 rounded-full"
+                                                        className="hover:text-red-500 transition-colors p-2 bg-red-500/20 text-red-500 rounded-full border border-red-500/30"
                                                         title="Delete Project"
                                                     >
                                                         <Trash2 size={20} />
