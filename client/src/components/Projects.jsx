@@ -130,7 +130,10 @@ const Projects = () => {
                                                 >
                                                     <ExternalLink size={20} />
                                                 </a>
-                                                {user && (project.user?._id === user._id || project.user === user._id) && (
+                                                {user && (
+                                                    (project.user?._id?.toString() === user._id?.toString()) ||
+                                                    (project.user?.toString() === user._id?.toString())
+                                                ) && (
                                                     <button 
                                                         onClick={(e) => {
                                                             e.preventDefault();

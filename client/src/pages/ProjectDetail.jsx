@@ -53,7 +53,10 @@ const ProjectDetail = () => {
         </div>
     );
 
-    const isOwner = user && (project.user?._id === user._id || project.user === user._id);
+    const isOwner = user && (
+        (project.user?._id?.toString() === user._id?.toString()) ||
+        (project.user?.toString() === user._id?.toString())
+    );
 
     return (
         <div className="pt-24 pb-12 px-6 max-w-7xl mx-auto">

@@ -16,7 +16,11 @@ const Dashboard = () => {
             setLoading(true);
             const { data } = await API.get('/projects');
             // Filter projects to show only those belonging to the current user
-            const myProjects = data.filter(p => p.user?._id === user?._id || p.user === user?._id);
+            const myProjects = data.filter(p => {
+                const projectUserId = p.user?._id?.toString() || p.user?.toString();
+                const currentUserId = user?._id?.toString();
+                return projectUserId === currentUserId;
+            });
             setProjects(myProjects);
             setLoading(false);
         } catch (error) {
