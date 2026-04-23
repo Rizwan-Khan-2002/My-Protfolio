@@ -38,9 +38,9 @@ const Projects = () => {
         }
     };
 
-    const filteredProjects = filter === 'All' 
-        ? projects 
-        : projects.filter(p => p.difficulty === filter);
+    const filteredProjects = Array.isArray(projects) 
+        ? (filter === 'All' ? projects : projects.filter(p => p && p.category === filter))
+        : [];
 
     return (
         <section id="projects" className="py-24 relative overflow-hidden">
@@ -72,94 +72,101 @@ const Projects = () => {
 
                 <motion.div layout className="grid grid-cols-1 lg:grid-cols-2 gap-16">
                     <AnimatePresence mode="popLayout">
-                        {filteredProjects.map((project, index) => (
-                            <motion.div
-                                key={project._id}
-                                layout
-                                initial={{ opacity: 0, y: 50 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.8, delay: index * 0.1 }}
-                                viewport={{ once: true }}
-                                whileHover={{ scale: 1.02 }}
-                                className="group relative"
-                            >
-                                <Link to={`/project/${project._id}`}>
-                                    <div className="relative aspect-[16/10] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-1000 border border-white/10">
-                                        <img 
-                                            src={project.image || 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&q=80&w=800'} 
-                                            alt={project.title}
-                                            className="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-[2s] ease-out"
-                                        />
-                                        
-                                        <div className="absolute inset-0 bg-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 mix-blend-overlay" />
-                                        
-                                        <div className="absolute top-8 left-8">
-                                            <div className="px-4 py-2 bg-black text-white text-[10px] font-black uppercase tracking-[0.3em]">
-                                                {project.difficulty}
+                        {(filteredProjects || []).map((project, index) => {
+                            if (!project || !project._id) return null;
+                            return (
+                                <motion.div
+                                    key={project._id}
+                                    layout
+                                    initial={{ opacity: 0, y: 50 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.8, delay: index * 0.1 }}
+                                    viewport={{ once: true }}
+                                    whileHover={{ scale: 1.02 }}
+                                    className="group relative"
+                                >
+                                    <Link to={`/project/${project._id}`}>
+                                        <div className="relative aspect-[16/10] overflow-hidden grayscale group-hover:grayscale-0 transition-all duration-1000 border border-white/10">
+                                            <img 
+                                                src={project.image || 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&q=80&w=800'} 
+                                                alt={project.title || 'Project'}
+                                                className="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-[2s] ease-out"
+                                            />
+                                            
+                                            <div className="absolute inset-0 bg-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 mix-blend-overlay" />
+                                            
+                                            <div className="absolute top-8 left-8">
+                                                <div className="px-4 py-2 bg-black text-white text-[10px] font-black uppercase tracking-[0.3em]">
+                                                    {project.category || 'Intermediate'}
+                                                </div>
+                                            </div>
+
+                                            <div className="absolute bottom-0 right-0 p-8 transform translate-y-full group-hover:translate-y-0 transition-transform duration-700">
+                                                <div className="w-16 h-16 bg-white text-black flex items-center justify-center">
+                                                    <ArrowUpRight size={32} />
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <div className="absolute bottom-0 right-0 p-8 transform translate-y-full group-hover:translate-y-0 transition-transform duration-700">
-                                            <div className="w-16 h-16 bg-white text-black flex items-center justify-center">
-                                                <ArrowUpRight size={32} />
+                                        <div className="mt-8 flex flex-col gap-4">
+                                            <div className="flex justify-between items-start">
+                                                <h3 className="text-3xl font-black italic uppercase tracking-tighter group-hover:text-accent transition-colors">
+                                                    {project.title || 'Untitled Project'}
+                                                </h3>
+                                                <div className="flex gap-4 opacity-40 group-hover:opacity-100 transition-opacity">
+                                                    {project.githubRepo && (
+                                                        <a 
+                                                            href={project.githubRepo} 
+                                                            target="_blank" 
+                                                            rel="noopener noreferrer"
+                                                            onClick={(e) => e.stopPropagation()} 
+                                                            className="hover:text-accent transition-colors p-2 bg-white/5 rounded-full"
+                                                        >
+                                                            <Github size={20} />
+                                                        </a>
+                                                    )}
+                                                    {project.liveDemo && (
+                                                        <a 
+                                                            href={project.liveDemo} 
+                                                            target="_blank" 
+                                                            rel="noopener noreferrer"
+                                                            onClick={(e) => e.stopPropagation()} 
+                                                            className="hover:text-accent transition-colors p-2 bg-white/5 rounded-full"
+                                                        >
+                                                            <ExternalLink size={20} />
+                                                        </a>
+                                                    )}
+                                                    {user && user._id && (
+                                                        (project.user?._id?.toString() === user._id.toString()) ||
+                                                        (project.user?.toString() === user._id.toString())
+                                                    ) && (
+                                                        <button 
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                handleDelete(project._id);
+                                                            }}
+                                                            className="hover:text-red-500 transition-colors p-2 bg-red-500/20 text-red-500 rounded-full border border-red-500/30"
+                                                            title="Delete Project"
+                                                        >
+                                                            <Trash2 size={20} />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="flex flex-wrap gap-3">
+                                                {project.techStack?.map(tech => (
+                                                    <span key={tech} className="text-[10px] text-white/40 uppercase tracking-widest font-bold">
+                                                        #{tech}
+                                                    </span>
+                                                ))}
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div className="mt-8 flex flex-col gap-4">
-                                        <div className="flex justify-between items-start">
-                                            <h3 className="text-3xl font-black italic uppercase tracking-tighter group-hover:text-accent transition-colors">
-                                                {project.title}
-                                            </h3>
-                                            <div className="flex gap-4 opacity-40 group-hover:opacity-100 transition-opacity">
-                                                <a 
-                                                    href={project.githubRepo} 
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer"
-                                                    onClick={(e) => e.stopPropagation()} 
-                                                    className="hover:text-accent transition-colors p-2 bg-white/5 rounded-full"
-                                                >
-                                                    <Github size={20} />
-                                                </a>
-                                                <a 
-                                                    href={project.liveDemo} 
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer"
-                                                    onClick={(e) => e.stopPropagation()} 
-                                                    className="hover:text-accent transition-colors p-2 bg-white/5 rounded-full"
-                                                >
-                                                    <ExternalLink size={20} />
-                                                </a>
-                                                {user && (
-                                                    (project.user?._id?.toString() === user._id?.toString()) ||
-                                                    (project.user?.toString() === user._id?.toString())
-                                                ) && (
-                                                    <button 
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            e.stopPropagation();
-                                                            handleDelete(project._id);
-                                                        }}
-                                                        className="hover:text-red-500 transition-colors p-2 bg-red-500/20 text-red-500 rounded-full border border-red-500/30"
-                                                        title="Delete Project"
-                                                    >
-                                                        <Trash2 size={20} />
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="flex flex-wrap gap-3">
-                                            {project.techStack?.map(tech => (
-                                                <span key={tech} className="text-[10px] text-white/40 uppercase tracking-widest font-bold">
-                                                    #{tech}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
-                        ))}
+                                    </Link>
+                                </motion.div>
+                            );
+                        })}
                     </AnimatePresence>
                 </motion.div>
             </div>

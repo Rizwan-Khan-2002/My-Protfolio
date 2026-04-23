@@ -4,7 +4,9 @@ import {
     Send, MapPin, Mail, Phone, 
     Linkedin, Github, Twitter, MessageSquare 
 } from 'lucide-react';
+import robotImg from '../assets/contact-robot.png';
 import API from '../services/api';
+import TransparentImage from './TransparentImage';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -14,6 +16,13 @@ const Contact = () => {
         message: ''
     });
     const [status, setStatus] = useState('');
+
+    const socialLinks = [
+        { icon: <Github size={20} />, url: "https://github.com/Rizwan-Khan-2002" },
+        { icon: <Linkedin size={20} />, url: "https://www.linkedin.com/in/rizwankhan8756" },
+        { icon: <MessageSquare size={20} />, url: "https://wa.me/918009030734" },
+        { icon: <Twitter size={20} />, url: "#" }
+    ];
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -50,68 +59,83 @@ const Contact = () => {
                     </p>
                 </div>
 
-                <div className="grid lg:grid-cols-2 gap-16 items-start">
-                    {/* Contact Info */}
+                <div className="grid lg:grid-cols-[0.7fr_1.3fr] gap-12 items-start relative">
+                    {/* Robot Mascot - Positioned between boxes */}
+                    <div className="absolute left-[33%] top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 hidden lg:block pointer-events-none">
+                        <motion.div 
+                            animate={{ 
+                                y: [-15, 15, -15],
+                            }}
+                            transition={{
+                                duration: 4,
+                                repeat: Infinity,
+                                ease: "easeInOut"
+                            }}
+                            className="w-48 h-48"
+                        >
+                            <TransparentImage 
+                                src={robotImg} 
+                                alt="Contact Robot" 
+                                className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(99,102,241,0.4)]" 
+                                threshold={45}
+                            />
+                        </motion.div>
+                    </div>
+
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         className="space-y-12"
                     >
-                        <div className="glass-card p-8">
+                        <div className="glass-card p-8 relative z-10">
                             <h3 className="text-2xl font-orbitron mb-8">Contact Information</h3>
                             <div className="space-y-6">
                                 <div className="flex items-start gap-6 group">
-                                    <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center group-hover:bg-secondary transition-colors duration-300">
-                                        <Mail className="w-6 h-6 text-secondary group-hover:text-white" />
+                                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all duration-500">
+                                        <Mail size={20} />
                                     </div>
                                     <div>
-                                        <p className="text-gray-500 text-xs uppercase tracking-widest font-semibold mb-1">Email Me</p>
-                                        <p className="text-lg font-medium">rizwankhanbara@gmail.com</p>
+                                        <p className="text-xs uppercase tracking-widest text-white/40 mb-1 font-bold">Email Me</p>
+                                        <p className="text-sm font-medium">rizwankhanbara@gmail.com</p>
                                     </div>
                                 </div>
 
                                 <div className="flex items-start gap-6 group">
-                                    <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent transition-colors duration-300">
-                                        <MapPin className="w-6 h-6 text-accent group-hover:text-white" />
+                                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all duration-500">
+                                        <MapPin size={20} />
                                     </div>
                                     <div>
-                                        <p className="text-gray-500 text-xs uppercase tracking-widest font-semibold mb-1">Location</p>
-                                        <p className="text-lg font-medium">Remote / India</p>
+                                        <p className="text-xs uppercase tracking-widest text-white/40 mb-1 font-bold">Location</p>
+                                        <p className="text-sm font-medium">Remote / India</p>
                                     </div>
                                 </div>
 
                                 <div className="flex items-start gap-6 group">
-                                    <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300">
-                                        <Phone className="w-6 h-6 text-gray-400 group-hover:text-white" />
+                                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all duration-500">
+                                        <Phone size={20} />
                                     </div>
                                     <div>
-                                        <p className="text-gray-500 text-xs uppercase tracking-widest font-semibold mb-1">Mobile</p>
-                                        <p className="text-lg font-medium">+91 8009030734</p>
+                                        <p className="text-xs uppercase tracking-widest text-white/40 mb-1 font-bold">Mobile</p>
+                                        <p className="text-sm font-medium">+91 8009030734</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-6">
-                            <h4 className="text-sm font-orbitron uppercase text-white/40">Socials</h4>
-                            <div className="flex gap-4">
-                                {[
-                                    { Icon: Github, href: "https://github.com/Rizwan-Khan-2002" },
-                                    { Icon: Linkedin, href: "https://www.linkedin.com/in/rizwankhan8756" },
-                                    { Icon: Twitter, href: "#" }
-                                ].map(({ Icon, href }, i) => (
-                                    <a 
-                                        key={i} 
-                                        href={href} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-secondary hover:border-secondary transition-all"
-                                    >
-                                        <Icon className="w-5 h-5" />
-                                    </a>
-                                ))}
-                            </div>
+                        <div className="flex gap-4">
+                            {socialLinks.map((social, index) => (
+                                <motion.a
+                                    key={index}
+                                    href={social.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    whileHover={{ y: -5, scale: 1.1 }}
+                                    className="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-accent hover:border-accent transition-all duration-500"
+                                >
+                                    {social.icon}
+                                </motion.a>
+                            ))}
                         </div>
                     </motion.div>
 
@@ -120,8 +144,9 @@ const Contact = () => {
                         initial={{ opacity: 0, x: 50 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
+                        className="relative"
                     >
-                        <form onSubmit={handleSubmit} className="glass-card p-10 space-y-6">
+                        <form onSubmit={handleSubmit} className="glass-card p-10 space-y-6 relative z-10">
                             <div className="grid md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
                                     <label className="text-sm text-gray-400 font-medium">Your Name</label>

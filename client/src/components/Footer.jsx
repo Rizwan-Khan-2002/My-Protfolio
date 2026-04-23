@@ -1,5 +1,5 @@
 import React from 'react';
-import { Rocket, Heart, Github, Linkedin, Twitter, Globe, ArrowUp } from 'lucide-react';
+import { Rocket, Heart, Github, Linkedin, Twitter, Globe, ArrowUp, MessageSquare } from 'lucide-react';
 
 const Footer = () => {
     const scrollToTop = () => {
@@ -23,6 +23,7 @@ const Footer = () => {
                             {[
                                 { Icon: Github, href: "https://github.com/Rizwan-Khan-2002" },
                                 { Icon: Linkedin, href: "https://www.linkedin.com/in/rizwankhan8756" },
+                                { Icon: MessageSquare, href: "https://wa.me/918009030734" },
                                 { Icon: Twitter, href: "#" },
                                 { Icon: Globe, href: "#" }
                             ].map(({ Icon, href }, i) => (
