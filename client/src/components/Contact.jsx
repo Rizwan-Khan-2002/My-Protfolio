@@ -64,9 +64,22 @@ const Contact = () => {
                     <h4 className="text-secondary font-orbitron tracking-widest uppercase mb-4">Connect</h4>
                     <h2 className="text-4xl md:text-5xl font-black mb-6">Get in <span className="gradient-text">Touch.</span></h2>
                     <p className="text-gray-400 max-w-2xl mx-auto">
-                        Whether you have a project in mind, a question, or just want to say hi, 
+                        Whether you have a project in mind, a question, or just want to say hi,
                         my inbox is always open. Let's build something amazing together!
                     </p>
+
+                    {/* Mobile/tablet robot — centered so it never overlaps the cards */}
+                    <motion.div
+                        animate={{ y: [-6, 6, -6] }}
+                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                        className="lg:hidden w-28 h-28 sm:w-32 sm:h-32 mx-auto mt-8"
+                    >
+                        <img
+                            src={robotImg}
+                            alt="Contact Robot"
+                            className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(99,102,241,0.45)]"
+                        />
+                    </motion.div>
                 </div>
 
                 <div className="grid lg:grid-cols-[0.7fr_1.3fr] gap-12 items-start relative">

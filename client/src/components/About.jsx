@@ -6,7 +6,7 @@ import API from '../services/api';
 import { mergeProfile } from '../data/profileDefaults';
 
 const About = () => {
-    const [resumeUrl, setResumeUrl] = useState('/resume.jpg');
+    const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
     const [profile, setProfile] = useState(mergeProfile(null));
 
     useEffect(() => {

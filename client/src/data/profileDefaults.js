@@ -1,17 +1,19 @@
 // Fallback content used by the About page + home sections until the admin
-// fills in the Profile from the dashboard. Keeps the site looking complete.
+// edits the Profile from the dashboard. Pre-filled from Rizwan's resume.
 export const profileDefaults = {
-    name: 'Rizwan Khan',
-    title: 'MERN Stack Developer',
-    tagline: 'I build scalable, high-performance web applications for the future.',
+    name: 'MD Rizwan Khan',
+    title: 'MBA (Finance & IT) · MERN Stack Developer',
+    tagline: 'Combining business knowledge with full-stack engineering.',
     bio:
-        "Hello! I'm Rizwan Khan, a passionate MERN Stack Developer based in India. " +
-        'I specialize in creating interactive, accessible, and high-performance web applications. ' +
-        'With a strong foundation in JavaScript and modern frameworks, I love turning complex problems ' +
-        'into simple, elegant solutions.',
-    photoUrl: '',
-    location: 'Remote / India',
-    email: 'rizwankhanbara@gmail.com',
+        'MBA (Finance & Information Technology) graduate with a strong academic foundation in ' +
+        'Commerce, Finance, Business Management and Information Technology. Skilled in Financial ' +
+        'Analysis, ERP, SAP Fundamentals, Computer Applications and Full-Stack Web Development. ' +
+        'Experienced in building real-world projects including ERP systems and web applications ' +
+        'using the MERN stack. I love combining business insight with technical expertise to solve ' +
+        'organizational challenges and support business growth.',
+    photoUrl: '/profile.jpg',
+    location: 'Varanasi, Uttar Pradesh, India',
+    email: 'rizwan.creativeswork@gmail.com',
     phone: '+91 8009030734',
     available: true,
     socials: {
@@ -22,36 +24,65 @@ export const profileDefaults = {
         website: 'https://rizwankhan-portfolio.vercel.app',
     },
     stats: {
-        experienceYears: '3+',
-        projectsCompleted: '20+',
-        happyClients: '15+',
+        experienceYears: '1+',
+        projectsCompleted: '10+',
+        happyClients: '5+',
     },
     education: [
         {
-            degree: 'Bachelor of Computer Applications (BCA)',
-            institution: 'Add your college name',
-            period: '2020 — 2023',
-            description: 'Foundation in computer science, programming and web technologies.',
+            degree: 'Master of Business Administration (MBA) — Finance & IT',
+            institution: 'J.S. University, Shikohabad, Uttar Pradesh',
+            period: '2024',
+            description: 'Specialization in Finance & Information Technology.',
+        },
+        {
+            degree: 'Bachelor of Commerce (B.Com)',
+            institution: 'Prof. Rajendra Singh (Rajju Bhaiya) University (Allahabad State University), Prayagraj',
+            period: '2022',
+            description: 'Foundation in Commerce, Accounting and Business Management.',
+        },
+        {
+            degree: 'Intermediate (12th — Commerce)',
+            institution: 'K.P. College, Prayagraj — U.P. Board',
+            period: '2018',
+            description: '',
+        },
+        {
+            degree: 'High School (10th)',
+            institution: 'Iqra Model School, Bara Ghazipur — CBSE Board',
+            period: '2016',
+            description: '',
         },
     ],
     experience: [
         {
-            role: 'MERN Stack Developer',
-            company: 'Freelance / Projects',
+            role: 'MERN Stack Web Developer',
+            company: 'Freelance / Personal Projects',
             period: '2023 — Present',
             description:
-                'Building full-stack web applications with React, Node.js, Express and MongoDB.',
+                'Building full-stack web applications and ERP systems with React, Node.js, Express ' +
+                'and MongoDB — including a School Management ERP, NoteVault and this portfolio.',
+        },
+        {
+            role: 'Business & Finance (MBA)',
+            company: 'Academic & Project Work',
+            period: '2022 — 2024',
+            description:
+                'Applied Financial Analysis, Business Analytics, ERP concepts and SAP fundamentals ' +
+                'to real-world business problems.',
         },
     ],
     skills: [
         { name: 'React.js', level: 90 },
+        { name: 'JavaScript (ES6+)', level: 90 },
         { name: 'Node.js', level: 85 },
-        { name: 'MongoDB', level: 80 },
-        { name: 'JavaScript', level: 95 },
         { name: 'Express.js', level: 85 },
-        { name: 'Tailwind CSS', level: 90 },
-        { name: 'Framer Motion', level: 85 },
+        { name: 'MongoDB', level: 80 },
+        { name: 'HTML5 & CSS3', level: 90 },
+        { name: 'REST API Development', level: 85 },
         { name: 'Git & GitHub', level: 85 },
+        { name: 'Financial Analysis & ERP', level: 80 },
+        { name: 'Java (Basic)', level: 60 },
     ],
 };
 
@@ -65,5 +96,7 @@ export const mergeProfile = (apiProfile) => {
     p.education = apiProfile.education?.length ? apiProfile.education : profileDefaults.education;
     p.experience = apiProfile.experience?.length ? apiProfile.experience : profileDefaults.experience;
     p.skills = apiProfile.skills?.length ? apiProfile.skills : profileDefaults.skills;
+    // If the admin hasn't uploaded a photo, keep the bundled default photo.
+    if (!apiProfile.photoUrl) p.photoUrl = profileDefaults.photoUrl;
     return p;
 };

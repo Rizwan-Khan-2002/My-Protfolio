@@ -13,7 +13,7 @@ import useScrollReveal from '../hooks/useScrollReveal';
 
 const AboutPage = () => {
     const [profile, setProfile] = useState(mergeProfile(null));
-    const [resumeUrl, setResumeUrl] = useState('/resume.jpg');
+    const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
     const [projectCount, setProjectCount] = useState(null);
     const revealRef = useScrollReveal('.reveal', { y: 40, stagger: 0.06 });
 
