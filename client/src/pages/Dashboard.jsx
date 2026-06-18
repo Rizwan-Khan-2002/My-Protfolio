@@ -85,7 +85,7 @@ const Dashboard = () => {
                     <h1 className="text-3xl sm:text-4xl font-orbitron mb-2">Admin <span className="gradient-text">Dashboard</span></h1>
                     <p className="text-gray-400">Welcome back, {user?.name}. Manage your projects & resume here.</p>
                 </motion.div>
-                <button onClick={openNew} className="btn-primary flex items-center justify-center gap-2">
+                <button onClick={openNew} className="btn-primary flex items-center justify-center gap-2 w-full md:w-auto">
                     <Plus className="w-5 h-5" /> New Project
                 </button>
             </div>
