@@ -27,7 +27,13 @@ const ParticleField = ({ count = 60, className = '' }) => {
         };
         resize();
 
-        const particles = Array.from({ length: reduce ? Math.min(20, count) : count }, () => ({
+        // Mobile is much weaker — use far fewer particles and skip the
+        // O(n²) connection-line pass which is the expensive part.
+        const isMobile = window.innerWidth < 768;
+        const targetCount = reduce ? Math.min(18, count) : (isMobile ? Math.min(22, count) : count);
+        const drawLines = !isMobile && !reduce;
+
+        const particles = Array.from({ length: targetCount }, () => ({
             x: Math.random() * w,
             y: Math.random() * h,
             r: Math.random() * 2 + 0.5,
@@ -55,19 +61,21 @@ const ParticleField = ({ count = 60, className = '' }) => {
                 ctx.globalAlpha = 0.5;
                 ctx.fill();
 
-                // connect nearby particles
-                for (let j = i + 1; j < particles.length; j++) {
-                    const q = particles[j];
-                    const dx = p.x - q.x;
-                    const dy = p.y - q.y;
-                    const dist = dx * dx + dy * dy;
-                    if (dist < 9000) {
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(q.x, q.y);
-                        ctx.strokeStyle = color;
-                        ctx.globalAlpha = 0.08;
-                        ctx.stroke();
+                // connect nearby particles (skipped on mobile for performance)
+                if (drawLines) {
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const q = particles[j];
+                        const dx = p.x - q.x;
+                        const dy = p.y - q.y;
+                        const dist = dx * dx + dy * dy;
+                        if (dist < 9000) {
+                            ctx.beginPath();
+                            ctx.moveTo(p.x, p.y);
+                            ctx.lineTo(q.x, q.y);
+                            ctx.strokeStyle = color;
+                            ctx.globalAlpha = 0.08;
+                            ctx.stroke();
+                        }
                     }
                 }
             }

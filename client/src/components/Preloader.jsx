@@ -8,12 +8,12 @@ const Preloader = ({ setLoading }) => {
             setCounter((prev) => {
                 if (prev >= 100) {
                     clearInterval(interval);
-                    setTimeout(() => setLoading(false), 500);
+                    setTimeout(() => setLoading(false), 250);
                     return 100;
                 }
-                return prev + 5;
+                return prev + 10;
             });
-        }, 50);
+        }, 30);
 
         return () => clearInterval(interval);
     }, [setLoading]);

@@ -83,6 +83,13 @@ body {
   transition: background-color 0.4s ease, color 0.4s ease;
 }
 
+/* Native <select> dropdown options need explicit colors or they render
+   white-on-white in dark mode (Published/Draft were invisible). */
+select option {
+  background-color: #0f0f17;
+  color: #ffffff;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-orbitron);
   font-weight: bold;
