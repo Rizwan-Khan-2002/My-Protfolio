@@ -54,43 +54,63 @@ const About = () => {
         <section id="about" className="py-24 relative overflow-hidden">
             <div className="container mx-auto px-6">
                 <div className="flex flex-col lg:flex-row items-center gap-16">
-                    {/* Image / Visual Side — floating cutout with GSAP 3D tilt */}
-                    <div
-                        className="lg:w-1/2 w-full flex justify-center"
-                        onMouseMove={handleTilt}
-                        onMouseLeave={resetTilt}
-                        style={{ perspective: '1000px' }}
-                    >
-                        <div ref={stageRef} className="relative w-full max-w-[280px] sm:max-w-sm aspect-square" style={{ transformStyle: 'preserve-3d' }}>
-                            {/* glow behind the circle */}
-                            <div className="absolute -inset-3 rounded-full bg-gradient-to-br from-secondary/40 to-accent/30 blur-3xl animate-pulse-slow" />
-                            {/* slow rotating dashed ring */}
-                            <div className="absolute -inset-2 rounded-full border border-dashed border-white/15" style={{ animation: 'spin 22s linear infinite' }} />
+                    {/* Image / Visual Side — circular photo + name + word-by-word tagline below */}
+                    <div className="lg:w-1/2 w-full flex flex-col items-center gap-7">
+                        <div
+                            className="w-full flex justify-center"
+                            onMouseMove={handleTilt}
+                            onMouseLeave={resetTilt}
+                            style={{ perspective: '1000px' }}
+                        >
+                            <div ref={stageRef} className="relative w-full max-w-[280px] sm:max-w-sm aspect-square" style={{ transformStyle: 'preserve-3d' }}>
+                                {/* glow behind the circle */}
+                                <div className="absolute -inset-3 rounded-full bg-gradient-to-br from-secondary/40 to-accent/30 blur-3xl animate-pulse-slow" />
+                                {/* slow rotating dashed ring */}
+                                <div className="absolute -inset-2 rounded-full border border-dashed border-white/15" style={{ animation: 'spin 22s linear infinite' }} />
 
-                            {/* the circular photo — fills the circle */}
-                            <div className="absolute inset-0 rounded-full overflow-hidden border-2 border-white/15 shadow-2xl animate-float bg-gradient-to-br from-secondary/25 to-primary">
-                                <img
-                                    ref={photoRef}
-                                    src="/profile-cutout.png"
-                                    alt={profile.name}
-                                    className="w-full h-full object-cover"
-                                    style={{ objectPosition: '50% 12%' }}
-                                />
+                                {/* the circular photo — fills the circle */}
+                                <div className="absolute inset-0 rounded-full overflow-hidden border-2 border-white/15 shadow-2xl animate-float bg-gradient-to-br from-secondary/25 to-primary">
+                                    <img
+                                        ref={photoRef}
+                                        src="/profile-cutout.png"
+                                        alt={profile.name}
+                                        className="w-full h-full object-cover"
+                                        style={{ objectPosition: '50% 12%' }}
+                                    />
+                                </div>
                             </div>
+                        </div>
 
-                            {/* name tag — slides in from the left */}
+                        {/* name + word-by-word tagline (below the circle, outside) */}
+                        <div className="text-center">
                             <motion.div
-                                initial={{ opacity: 0, x: -60 }}
+                                initial={{ opacity: 0, x: -50 }}
                                 whileInView={{ opacity: 1, x: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ duration: 0.7, delay: 0.4, ease: 'easeOut' }}
-                                className="absolute bottom-8 left-0 sm:-left-6 z-20 glass-card px-5 py-3 border-l-4 border-l-secondary"
+                                transition={{ duration: 0.6, ease: 'easeOut' }}
                             >
-                                <p className="text-[10px] uppercase tracking-[0.25em] text-accent font-bold flex items-center gap-1">
+                                <p className="text-[11px] uppercase tracking-[0.3em] text-accent font-bold flex items-center justify-center gap-2">
                                     <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" /> Rizwan Here
                                 </p>
-                                <p className="text-lg font-black gradient-text leading-tight">MERN Developer</p>
+                                <p className="text-2xl sm:text-3xl font-black gradient-text leading-tight">MERN Developer</p>
                             </motion.div>
+
+                            {/* tagline revealed one word at a time, sliding from the left */}
+                            <p className="mt-3 flex flex-wrap justify-center gap-x-1.5 gap-y-1 text-sm text-gray-400 max-w-xs mx-auto">
+                                {(profile.tagline || 'Combining business knowledge with full-stack engineering.')
+                                    .split(' ')
+                                    .map((word, i) => (
+                                        <motion.span
+                                            key={i}
+                                            initial={{ opacity: 0, x: -16 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ duration: 0.4, delay: 0.3 + i * 0.08, ease: 'easeOut' }}
+                                        >
+                                            {word}
+                                        </motion.span>
+                                    ))}
+                            </p>
                         </div>
                     </div>
 
