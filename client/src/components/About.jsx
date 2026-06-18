@@ -64,24 +64,29 @@ const About = () => {
                         onMouseLeave={resetTilt}
                         style={{ perspective: '1000px' }}
                     >
-                        <div ref={stageRef} className="relative w-full max-w-sm sm:max-w-md aspect-[4/5]" style={{ transformStyle: 'preserve-3d' }}>
-                            {/* animated gradient blobs / rings behind */}
-                            <div className="absolute inset-6 rounded-[42%] bg-gradient-to-br from-secondary/40 to-accent/40 blur-3xl animate-pulse-slow" />
-                            <div className="absolute inset-0 rounded-[45%] border border-white/10 animate-float" />
-                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-3/4 h-6 bg-black/40 blur-2xl rounded-full" />
+                        <div ref={stageRef} className="relative w-full max-w-xs sm:max-w-sm aspect-[4/5]" style={{ transformStyle: 'preserve-3d' }}>
+                            {/* soft circular gradient backdrop */}
+                            <div className="absolute inset-2 rounded-full bg-gradient-to-br from-secondary/35 to-accent/30 blur-3xl animate-pulse-slow" />
+                            <div className="absolute inset-0 rounded-full border border-white/10 animate-float" />
+                            {/* grounding shadow */}
+                            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2/3 h-5 bg-black/50 blur-2xl rounded-full" />
 
-                            {/* badge */}
-                            <div className="absolute -right-2 sm:right-2 top-6 z-20 glass-card px-4 py-2 text-center">
-                                <p className="text-lg font-black gradient-text leading-none">MERN</p>
+                            {/* floating MERN badge */}
+                            <div className="absolute left-0 sm:-left-3 bottom-10 z-20 glass-card px-4 py-2 text-center animate-float">
+                                <p className="text-base font-black gradient-text leading-none">MERN</p>
                                 <p className="text-[9px] uppercase tracking-widest text-white/50">Developer</p>
                             </div>
 
-                            {/* the photo */}
+                            {/* the photo — bottom fades out so the cutout edge looks intentional */}
                             <img
                                 ref={photoRef}
                                 src="/profile-cutout.png"
                                 alt={profile.name}
-                                className="relative z-10 w-full h-full object-contain object-bottom drop-shadow-[0_25px_40px_rgba(0,0,0,0.5)]"
+                                className="relative z-10 w-full h-full object-contain object-bottom drop-shadow-[0_25px_45px_rgba(0,0,0,0.55)]"
+                                style={{
+                                    WebkitMaskImage: 'linear-gradient(to bottom, #000 86%, transparent 100%)',
+                                    maskImage: 'linear-gradient(to bottom, #000 86%, transparent 100%)',
+                                }}
                             />
                         </div>
                     </div>
