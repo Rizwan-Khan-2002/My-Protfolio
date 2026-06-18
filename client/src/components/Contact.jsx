@@ -6,7 +6,6 @@ import {
 } from 'lucide-react';
 import robotImg from '../assets/contact-robot.png';
 import API from '../services/api';
-import TransparentImage from './TransparentImage';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -65,13 +64,12 @@ const Contact = () => {
                         <motion.div
                             animate={{ y: [-10, 10, -10], rotate: [-3, 3, -3] }}
                             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                            className="w-36 h-36 xl:w-44 xl:h-44"
+                            className="w-40 h-40 xl:w-52 xl:h-52"
                         >
-                            <TransparentImage
+                            <img
                                 src={robotImg}
                                 alt="Contact Robot"
                                 className="w-full h-full object-contain filter drop-shadow-[0_0_25px_rgba(99,102,241,0.45)]"
-                                threshold={45}
                             />
                         </motion.div>
                     </div>
