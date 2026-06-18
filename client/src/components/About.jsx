@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Award, Briefcase, Zap } from 'lucide-react';
+import { CheckCircle2, Award, Briefcase, Zap, Download } from 'lucide-react';
+import API from '../services/api';
 
 const About = () => {
+    const [resumeUrl, setResumeUrl] = useState('/resume.jpg');
+
+    useEffect(() => {
+        let active = true;
+        API.get('/resume')
+            .then(({ data }) => { if (active && data?.resumeUrl) setResumeUrl(data.resumeUrl); })
+            .catch(() => { /* keep fallback */ });
+        return () => { active = false; };
+    }, []);
+
     const stats = [
         { label: 'Years Experience', value: '3+', icon: Briefcase },
         { label: 'Projects Completed', value: '20+', icon: CheckCircle2 },
@@ -61,8 +72,8 @@ const About = () => {
                             ))}
                         </div>
 
-                        <a href="#contact" className="btn-primary inline-flex items-center">
-                            Download Resume
+                        <a href={resumeUrl} target="_blank" rel="noopener noreferrer" download className="btn-primary inline-flex items-center gap-2">
+                            <Download size={18} /> Download Resume
                         </a>
                     </motion.div>
                 </div>

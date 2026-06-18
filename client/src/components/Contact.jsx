@@ -5,6 +5,7 @@ import {
     Linkedin, Github, Twitter, MessageSquare 
 } from 'lucide-react';
 import robotImg from '../assets/contact-robot.png';
+import robotImg2 from '../assets/contact-robot-2.png';
 import API from '../services/api';
 
 const Contact = () => {
@@ -59,17 +60,32 @@ const Contact = () => {
                 </div>
 
                 <div className="grid lg:grid-cols-[0.7fr_1.3fr] gap-12 items-start relative">
-                    {/* Robot Mascot - peeks in from the top-right, greeting visitors */}
-                    <div className="absolute right-2 xl:-right-6 -top-28 z-20 hidden lg:block pointer-events-none">
+                    {/* Phone robot — floats above Contact Information, facing inward as if pointing to it */}
+                    <div className="absolute -top-44 left-0 xl:-left-14 z-20 hidden lg:block pointer-events-none">
                         <motion.div
-                            animate={{ y: [-10, 10, -10], rotate: [-3, 3, -3] }}
+                            animate={{ y: [-8, 8, -8] }}
                             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                            className="w-40 h-40 xl:w-52 xl:h-52"
+                            className="w-32 h-32 xl:w-40 xl:h-40 -scale-x-100"
                         >
                             <img
                                 src={robotImg}
-                                alt="Contact Robot"
+                                alt="Robot pointing to contact info"
                                 className="w-full h-full object-contain filter drop-shadow-[0_0_25px_rgba(99,102,241,0.45)]"
+                            />
+                        </motion.div>
+                    </div>
+
+                    {/* Thumbs-up board robot — floats above the contact form on the right */}
+                    <div className="absolute -top-48 right-0 xl:-right-10 z-20 hidden lg:block pointer-events-none">
+                        <motion.div
+                            animate={{ y: [8, -8, 8], rotate: [-2, 2, -2] }}
+                            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                            className="w-44 h-44 xl:w-56 xl:h-56"
+                        >
+                            <img
+                                src={robotImg2}
+                                alt="Robot giving a thumbs up"
+                                className="w-full h-full object-contain filter drop-shadow-[0_0_25px_rgba(34,211,238,0.4)]"
                             />
                         </motion.div>
                     </div>

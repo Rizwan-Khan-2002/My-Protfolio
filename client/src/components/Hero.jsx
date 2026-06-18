@@ -1,21 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
-import { Github, Linkedin, Download } from 'lucide-react';
-import API from '../services/api';
+import { Github, Linkedin, User } from 'lucide-react';
 import ParticleField from './ParticleField';
 
 const Hero = () => {
     const heroRef = useRef(null);
-    const [resumeUrl, setResumeUrl] = useState('/resume.jpg');
-
-    useEffect(() => {
-        let active = true;
-        API.get('/resume')
-            .then(({ data }) => { if (active && data?.resumeUrl) setResumeUrl(data.resumeUrl); })
-            .catch(() => { /* keep fallback */ });
-        return () => { active = false; };
-    }, []);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -121,8 +111,8 @@ const Hero = () => {
                     <a href="#projects" className="px-10 py-5 bg-white text-black font-black uppercase text-sm tracking-widest hover:bg-accent hover:text-white transition-all transform hover:-translate-y-1 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)]">
                         Explore Projects
                     </a>
-                    <a href={resumeUrl} target="_blank" rel="noopener noreferrer" download className="px-10 py-5 bg-accent text-white font-black uppercase text-sm tracking-widest hover:bg-white hover:text-black transition-all transform hover:-translate-y-1 active:scale-95 shadow-[0_20px_40px_rgba(99,102,241,0.2)] flex items-center gap-2">
-                        <Download size={18} /> Download Resume
+                    <a href="#about" className="px-10 py-5 bg-accent text-white font-black uppercase text-sm tracking-widest hover:bg-white hover:text-black transition-all transform hover:-translate-y-1 active:scale-95 shadow-[0_20px_40px_rgba(99,102,241,0.2)] flex items-center gap-2">
+                        <User size={18} /> About Me
                     </a>
                     <a href="#contact" className="px-10 py-5 bg-transparent border-2 border-white/20 text-white font-black uppercase text-sm tracking-widest hover:border-accent hover:text-accent transition-all transform hover:-translate-y-1 active:scale-95">
                         Build Together
