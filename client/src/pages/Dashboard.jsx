@@ -113,9 +113,14 @@ const Dashboard = () => {
             </div>
 
             {/* Projects table */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                 <h2 className="text-xl font-orbitron">Manage Projects</h2>
-                <Link to="/admin" className="text-sm text-secondary hover:underline">Manage Users →</Link>
+                <div className="flex items-center gap-4">
+                    <button onClick={openNew} className="btn-primary flex items-center gap-2 text-sm py-2 px-5">
+                        <Plus className="w-4 h-4" /> New Project
+                    </button>
+                    <Link to="/admin" className="text-sm text-secondary hover:underline whitespace-nowrap">Manage Users →</Link>
+                </div>
             </div>
 
             {error && <div className="bg-red-500/10 border border-red-500/40 p-4 rounded-xl text-red-400 mb-6">{error}</div>}
