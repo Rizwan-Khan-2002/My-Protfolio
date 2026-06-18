@@ -78,11 +78,19 @@ const About = () => {
                                 />
                             </div>
 
-                            {/* floating MERN badge */}
-                            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-20 glass-card px-5 py-2 text-center animate-float">
-                                <p className="text-base font-black gradient-text leading-none">MERN</p>
-                                <p className="text-[9px] uppercase tracking-widest text-white/50">Developer</p>
-                            </div>
+                            {/* name tag — slides in from the left */}
+                            <motion.div
+                                initial={{ opacity: 0, x: -60 }}
+                                whileInView={{ opacity: 1, x: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.7, delay: 0.4, ease: 'easeOut' }}
+                                className="absolute bottom-8 left-0 sm:-left-6 z-20 glass-card px-5 py-3 border-l-4 border-l-secondary"
+                            >
+                                <p className="text-[10px] uppercase tracking-[0.25em] text-accent font-bold flex items-center gap-1">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" /> Rizwan Here
+                                </p>
+                                <p className="text-lg font-black gradient-text leading-tight">MERN Developer</p>
+                            </motion.div>
                         </div>
                     </div>
 
