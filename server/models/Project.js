@@ -12,7 +12,9 @@ const projectSchema = mongoose.Schema(
         githubRepo: { type: String },
 
         // Canonical category field used by the filter UI.
-        category: { type: String, enum: CATEGORIES, default: 'Intermediate' },
+        // NO default on purpose: legacy docs without `category` should fall back
+        // to `difficulty` in the UI instead of being forced to "Intermediate".
+        category: { type: String, enum: CATEGORIES },
         // Kept in sync with `category` for backward-compatibility with older data.
         difficulty: { type: String, enum: CATEGORIES, default: 'Intermediate' },
 
