@@ -8,6 +8,7 @@ import contactRoutes from './routes/contact.js';
 import adminRoutes from './routes/admin.js';
 import uploadRoutes from './routes/upload.js';
 import resumeRoutes from './routes/resume.js';
+import profileRoutes from './routes/profile.js';
 
 dotenv.config();
 connectDB();
@@ -42,6 +43,7 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/resume', resumeRoutes);
+app.use('/api/profile', profileRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running...');

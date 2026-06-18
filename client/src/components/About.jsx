@@ -1,23 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Award, Briefcase, Zap, Download } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import API from '../services/api';
+import { mergeProfile } from '../data/profileDefaults';
 
 const About = () => {
     const [resumeUrl, setResumeUrl] = useState('/resume.jpg');
+    const [profile, setProfile] = useState(mergeProfile(null));
 
     useEffect(() => {
         let active = true;
         API.get('/resume')
             .then(({ data }) => { if (active && data?.resumeUrl) setResumeUrl(data.resumeUrl); })
             .catch(() => { /* keep fallback */ });
+        API.get('/profile')
+            .then(({ data }) => { if (active) setProfile(mergeProfile(data)); })
+            .catch(() => { /* keep defaults */ });
         return () => { active = false; };
     }, []);
 
     const stats = [
-        { label: 'Years Experience', value: '3+', icon: Briefcase },
-        { label: 'Projects Completed', value: '20+', icon: CheckCircle2 },
-        { label: 'Happy Clients', value: '15+', icon: Award },
+        { label: 'Years Experience', value: profile.stats.experienceYears, icon: Briefcase },
+        { label: 'Projects Completed', value: profile.stats.projectsCompleted, icon: CheckCircle2 },
+        { label: 'Happy Clients', value: profile.stats.happyClients, icon: Award },
     ];
 
     return (
@@ -56,10 +62,7 @@ const About = () => {
                             I build scalable applications for the <span className="gradient-text">Future.</span>
                         </h2>
                         <p className="text-gray-400 text-lg mb-8 leading-relaxed">
-                            Hello! I'm Rizwan Khan, a passionate MERN Stack Developer based in India. 
-                            I specialize in creating interactive, accessible, and high-performance web applications. 
-                            With a strong foundation in JavaScript and modern frameworks, I love turning complex problems 
-                            into simple, elegant solutions.
+                            {profile.bio}
                         </p>
 
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
@@ -72,9 +75,14 @@ const About = () => {
                             ))}
                         </div>
 
-                        <a href={resumeUrl} target="_blank" rel="noopener noreferrer" download className="btn-primary inline-flex items-center gap-2">
-                            <Download size={18} /> Download Resume
-                        </a>
+                        <div className="flex flex-wrap gap-4">
+                            <a href={resumeUrl} target="_blank" rel="noopener noreferrer" download className="btn-primary inline-flex items-center gap-2">
+                                <Download size={18} /> Download Resume
+                            </a>
+                            <Link to="/about-me" className="btn-outline inline-flex items-center gap-2">
+                                Know More
+                            </Link>
+                        </div>
                     </motion.div>
                 </div>
             </div>

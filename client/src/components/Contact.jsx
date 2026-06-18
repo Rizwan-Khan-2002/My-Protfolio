@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
     Send, MapPin, Mail, Phone, 
@@ -7,6 +7,7 @@ import {
 import robotImg from '../assets/contact-robot.png';
 import robotImg2 from '../assets/contact-robot-2.png';
 import API from '../services/api';
+import { mergeProfile } from '../data/profileDefaults';
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -16,13 +17,22 @@ const Contact = () => {
         message: ''
     });
     const [status, setStatus] = useState('');
+    const [profile, setProfile] = useState(mergeProfile(null));
+
+    useEffect(() => {
+        let active = true;
+        API.get('/profile')
+            .then(({ data }) => { if (active) setProfile(mergeProfile(data)); })
+            .catch(() => { /* keep defaults */ });
+        return () => { active = false; };
+    }, []);
 
     const socialLinks = [
-        { icon: <Github size={20} />, url: "https://github.com/Rizwan-Khan-2002" },
-        { icon: <Linkedin size={20} />, url: "https://www.linkedin.com/in/rizwankhan8756" },
-        { icon: <MessageSquare size={20} />, url: "https://wa.me/918009030734" },
-        { icon: <Twitter size={20} />, url: "#" }
-    ];
+        { icon: <Github size={20} />, url: profile.socials.github },
+        { icon: <Linkedin size={20} />, url: profile.socials.linkedin },
+        { icon: <MessageSquare size={20} />, url: profile.socials.whatsapp },
+        { icon: <Twitter size={20} />, url: profile.socials.twitter },
+    ].filter((s) => s.url);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -105,7 +115,7 @@ const Contact = () => {
                                     </div>
                                     <div>
                                         <p className="text-xs uppercase tracking-widest text-white/40 mb-1 font-bold">Email Me</p>
-                                        <p className="text-sm font-medium">rizwankhanbara@gmail.com</p>
+                                        <p className="text-sm font-medium break-words">{profile.email}</p>
                                     </div>
                                 </div>
 
@@ -115,7 +125,7 @@ const Contact = () => {
                                     </div>
                                     <div>
                                         <p className="text-xs uppercase tracking-widest text-white/40 mb-1 font-bold">Location</p>
-                                        <p className="text-sm font-medium">Remote / India</p>
+                                        <p className="text-sm font-medium">{profile.location}</p>
                                     </div>
                                 </div>
 
@@ -125,7 +135,7 @@ const Contact = () => {
                                     </div>
                                     <div>
                                         <p className="text-xs uppercase tracking-widest text-white/40 mb-1 font-bold">Mobile</p>
-                                        <p className="text-sm font-medium">+91 8009030734</p>
+                                        <p className="text-sm font-medium">{profile.phone}</p>
                                     </div>
                                 </div>
                             </div>

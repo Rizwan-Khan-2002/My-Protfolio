@@ -18,6 +18,7 @@ const Signup = lazy(() => import('./pages/Signup'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const ProjectDetail = lazy(() => import('./pages/ProjectDetail'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AboutPage = lazy(() => import('./pages/AboutPage'));
 
 const RouteFallback = () => (
     <div className="min-h-screen flex items-center justify-center">
@@ -38,6 +39,7 @@ function App() {
                         <Suspense fallback={<RouteFallback />}>
                             <Routes>
                                 <Route path="/" element={<Home />} />
+                                <Route path="/about-me" element={<AboutPage />} />
                                 <Route path="/project/:id" element={<ProjectDetail />} />
                                 <Route path="/login" element={<Login />} />
                                 <Route path="/signup" element={<Signup />} />

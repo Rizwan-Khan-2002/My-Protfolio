@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import ProjectModal from '../components/ProjectModal';
 import ConfirmModal from '../components/ConfirmModal';
 import ResumeManager from '../components/ResumeManager';
+import ProfileManager from '../components/ProfileManager';
 import SmartImage from '../components/SmartImage';
 
 const Dashboard = () => {
@@ -105,9 +106,10 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Resume management */}
-            <div className="mb-10">
+            {/* Resume + Profile management */}
+            <div className="grid gap-10 mb-10">
                 <ResumeManager />
+                <ProfileManager />
             </div>
 
             {/* Projects table */}
