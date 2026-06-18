@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
 
 @theme {
   --color-primary: #0a0a0a;
@@ -20,17 +20,67 @@
   }
 }
 
-:root {
-  --primary: #0a0a0a;
-  --secondary: #8b5cf6;
-  --accent: #06b6d4;
+/* ─────────────────────────────────────────────
+   THEME TOKENS
+   The default (dark) tokens live on :root. Each theme
+   overrides the same Tailwind color variables so utilities
+   like bg-primary / text-accent re-skin automatically.
+   ───────────────────────────────────────────── */
+:root,
+:root[data-theme="dark"] {
+  --color-primary: #0a0a0a;
+  --color-secondary: #8b5cf6;
+  --color-secondary-dark: #6d28d9;
+  --color-accent: #06b6d4;
+  --text-color: #ffffff;
+  --surface: rgba(255, 255, 255, 0.05);
+  --surface-border: rgba(255, 255, 255, 0.10);
+  --body-gradient: none;
+}
+
+:root[data-theme="cyberpunk"] {
+  --color-primary: #07010f;
+  --color-secondary: #ff2bd6;
+  --color-secondary-dark: #b3009b;
+  --color-accent: #00f0ff;
+  --text-color: #f6f0ff;
+  --surface: rgba(255, 43, 214, 0.07);
+  --surface-border: rgba(0, 240, 255, 0.25);
+  --body-gradient: radial-gradient(circle at 15% 20%, rgba(255,43,214,0.12), transparent 40%),
+                   radial-gradient(circle at 85% 80%, rgba(0,240,255,0.12), transparent 40%);
+}
+
+:root[data-theme="glass"] {
+  --color-primary: #140832;
+  --color-secondary: #a78bfa;
+  --color-secondary-dark: #7c3aed;
+  --color-accent: #22d3ee;
+  --text-color: #ffffff;
+  --surface: rgba(255, 255, 255, 0.10);
+  --surface-border: rgba(255, 255, 255, 0.20);
+  --body-gradient: linear-gradient(135deg, rgba(167,139,250,0.18), transparent 45%),
+                   linear-gradient(315deg, rgba(34,211,238,0.18), transparent 45%);
+}
+
+:root[data-theme="light"] {
+  --color-primary: #f4f4f7;
+  --color-secondary: #7c3aed;
+  --color-secondary-dark: #6d28d9;
+  --color-accent: #0891b2;
+  --text-color: #0f172a;
+  --surface: rgba(15, 23, 42, 0.04);
+  --surface-border: rgba(15, 23, 42, 0.12);
+  --body-gradient: none;
 }
 
 body {
-  background-color: var(--primary);
-  color: white;
+  background-color: var(--color-primary);
+  background-image: var(--body-gradient);
+  background-attachment: fixed;
+  color: var(--text-color);
   font-family: var(--font-sans);
   overflow-x: hidden;
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -39,23 +89,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .btn-primary {
-  @apply relative px-8 py-3 rounded-full bg-secondary transition-all duration-300 font-semibold overflow-hidden;
+  @apply relative px-8 py-3 rounded-full bg-secondary text-white transition-all duration-300 font-semibold overflow-hidden;
 }
-
-.btn-primary:hover {
-  @apply bg-secondary-dark;
-}
+.btn-primary:hover { @apply bg-secondary-dark; }
 
 .btn-outline {
   @apply relative px-8 py-3 rounded-full border border-secondary text-secondary transition-all duration-300 font-semibold;
 }
-
-.btn-outline:hover {
-  @apply bg-secondary/10;
-}
+.btn-outline:hover { @apply bg-secondary/10; }
 
 .glass-card {
-  @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl;
+  background-color: var(--surface);
+  border: 1px solid var(--surface-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 1rem;
 }
 
 .gradient-text {
@@ -66,20 +114,72 @@ h1, h2, h3, h4, h5, h6 {
   @apply absolute -z-10 w-[500px] h-[500px] rounded-full blur-[120px] opacity-20;
 }
 
+/* ─────────────────────────────────────────────
+   LIGHT THEME OVERRIDES
+   The design is dark-first (lots of white/translucent
+   utilities). These remap them to dark-on-light so the
+   light theme stays readable.
+   ───────────────────────────────────────────── */
+:root[data-theme="light"] .text-white { color: #0f172a !important; }
+:root[data-theme="light"] .text-white\/70 { color: rgba(15,23,42,0.72) !important; }
+:root[data-theme="light"] .text-white\/60 { color: rgba(15,23,42,0.65) !important; }
+:root[data-theme="light"] .text-white\/50 { color: rgba(15,23,42,0.58) !important; }
+:root[data-theme="light"] .text-white\/40 { color: rgba(15,23,42,0.52) !important; }
+:root[data-theme="light"] .text-white\/30 { color: rgba(15,23,42,0.45) !important; }
+:root[data-theme="light"] .text-white\/20 { color: rgba(15,23,42,0.38) !important; }
+:root[data-theme="light"] .text-gray-300 { color: #334155 !important; }
+:root[data-theme="light"] .text-gray-400 { color: #475569 !important; }
+:root[data-theme="light"] .text-gray-500 { color: #64748b !important; }
+:root[data-theme="light"] .text-gray-600 { color: #94a3b8 !important; }
+
+:root[data-theme="light"] .bg-white\/5 { background-color: rgba(15,23,42,0.04) !important; }
+:root[data-theme="light"] .bg-white\/10 { background-color: rgba(15,23,42,0.07) !important; }
+:root[data-theme="light"] .bg-white\/20 { background-color: rgba(15,23,42,0.10) !important; }
+
+:root[data-theme="light"] .border-white\/5 { border-color: rgba(15,23,42,0.07) !important; }
+:root[data-theme="light"] .border-white\/10 { border-color: rgba(15,23,42,0.12) !important; }
+:root[data-theme="light"] .border-white\/20 { border-color: rgba(15,23,42,0.18) !important; }
+:root[data-theme="light"] .border-white\/30 { border-color: rgba(15,23,42,0.25) !important; }
+
+/* High-contrast buttons (bg-white text-black) invert in light mode */
+:root[data-theme="light"] .bg-white { background-color: #0f172a !important; }
+:root[data-theme="light"] .text-black { color: #ffffff !important; }
+/* Preloader stays dark intentionally; keep its black bg */
+:root[data-theme="light"] .bg-black { background-color: #0a0a0a !important; }
+
 /* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--color-primary); }
+::-webkit-scrollbar-thumb { background: var(--color-secondary); opacity: 0.5; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-secondary-dark); }
+
+/* ─────────────────────────────────────────────
+   ANIMATION & 3D HELPERS
+   ───────────────────────────────────────────── */
+.reveal-init { opacity: 0; transform: translateY(40px); }
+
+.tilt-card { transform-style: preserve-3d; transition: transform 0.25s ease; will-change: transform; }
+.tilt-inner { transform: translateZ(40px); }
+
+@keyframes float-y { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+.animate-float { animation: float-y 6s ease-in-out infinite; }
+
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  animation: shimmer 1.4s infinite;
 }
 
-::-webkit-scrollbar-track {
-  background: var(--primary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.5);
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #8b5cf6;
+@media (prefers-reduced-motion: reduce) {
+  .animate-float, .skeleton::after { animation: none; }
+  .reveal-init { opacity: 1; transform: none; }
 }

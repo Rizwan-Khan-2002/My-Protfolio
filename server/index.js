@@ -6,6 +6,8 @@ import authRoutes from './routes/auth.js';
 import projectRoutes from './routes/projects.js';
 import contactRoutes from './routes/contact.js';
 import adminRoutes from './routes/admin.js';
+import uploadRoutes from './routes/upload.js';
+import resumeRoutes from './routes/resume.js';
 
 dotenv.config();
 connectDB();
@@ -14,9 +16,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
-    'http://localhost:5173', 
+    'http://localhost:5173',
     'http://localhost:3000',
-    'https://rizwan-portfolio.vercel.app' // You can update this later
+    'https://rizwan-portfolio.vercel.app',
+    'https://rizwankhan-portfolio.vercel.app',
+    'https://my-protfolio-rho-indol.vercel.app',
 ];
 
 app.use(cors({
@@ -36,6 +40,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/upload', uploadRoutes);
+app.use('/api/resume', resumeRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running...');

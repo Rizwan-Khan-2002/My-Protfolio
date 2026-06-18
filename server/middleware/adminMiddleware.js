@@ -8,8 +8,8 @@ export const isAdmin = async (req, res, next) => {
             return res.status(401).json({ message: 'Not authorized, no token' });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'supersecret123');
-        const user = await User.findById(decoded.id);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id).select('-password');
 
         if (user && user.role === 'admin') {
             req.user = user;
