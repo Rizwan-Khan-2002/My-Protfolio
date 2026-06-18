@@ -12,15 +12,12 @@ const About = () => {
     const photoRef = useRef(null);
     const stageRef = useRef(null);
 
-    // GSAP: gentle floating + entrance for the cutout photo.
+    // GSAP: entrance for the circular photo (float handled via CSS so the
+    // image never shifts inside the clipped circle).
     useEffect(() => {
         if (!photoRef.current) return;
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const ctx = gsap.context(() => {
-            gsap.fromTo(photoRef.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' });
-            if (!reduce) {
-                gsap.to(photoRef.current, { y: '+=16', duration: 3, repeat: -1, yoyo: true, ease: 'sine.inOut' });
-            }
+            gsap.fromTo(photoRef.current, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 1, ease: 'power3.out' });
         }, stageRef);
         return () => ctx.revert();
     }, [profile.photoUrl]);
@@ -64,30 +61,28 @@ const About = () => {
                         onMouseLeave={resetTilt}
                         style={{ perspective: '1000px' }}
                     >
-                        <div ref={stageRef} className="relative w-full max-w-xs sm:max-w-sm aspect-[4/5]" style={{ transformStyle: 'preserve-3d' }}>
-                            {/* soft circular gradient backdrop */}
-                            <div className="absolute inset-2 rounded-full bg-gradient-to-br from-secondary/35 to-accent/30 blur-3xl animate-pulse-slow" />
-                            <div className="absolute inset-0 rounded-full border border-white/10 animate-float" />
-                            {/* grounding shadow */}
-                            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2/3 h-5 bg-black/50 blur-2xl rounded-full" />
+                        <div ref={stageRef} className="relative w-full max-w-[280px] sm:max-w-sm aspect-square" style={{ transformStyle: 'preserve-3d' }}>
+                            {/* glow behind the circle */}
+                            <div className="absolute -inset-3 rounded-full bg-gradient-to-br from-secondary/40 to-accent/30 blur-3xl animate-pulse-slow" />
+                            {/* slow rotating dashed ring */}
+                            <div className="absolute -inset-2 rounded-full border border-dashed border-white/15" style={{ animation: 'spin 22s linear infinite' }} />
+
+                            {/* the circular photo — fills the circle */}
+                            <div className="absolute inset-0 rounded-full overflow-hidden border-2 border-white/15 shadow-2xl animate-float bg-gradient-to-br from-secondary/25 to-primary">
+                                <img
+                                    ref={photoRef}
+                                    src="/profile-cutout.png"
+                                    alt={profile.name}
+                                    className="w-full h-full object-cover"
+                                    style={{ objectPosition: '50% 12%' }}
+                                />
+                            </div>
 
                             {/* floating MERN badge */}
-                            <div className="absolute left-0 sm:-left-3 bottom-10 z-20 glass-card px-4 py-2 text-center animate-float">
+                            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 z-20 glass-card px-5 py-2 text-center animate-float">
                                 <p className="text-base font-black gradient-text leading-none">MERN</p>
                                 <p className="text-[9px] uppercase tracking-widest text-white/50">Developer</p>
                             </div>
-
-                            {/* the photo — bottom fades out so the cutout edge looks intentional */}
-                            <img
-                                ref={photoRef}
-                                src="/profile-cutout.png"
-                                alt={profile.name}
-                                className="relative z-10 w-full h-full object-contain object-bottom drop-shadow-[0_25px_45px_rgba(0,0,0,0.55)]"
-                                style={{
-                                    WebkitMaskImage: 'linear-gradient(to bottom, #000 86%, transparent 100%)',
-                                    maskImage: 'linear-gradient(to bottom, #000 86%, transparent 100%)',
-                                }}
-                            />
                         </div>
                     </div>
 
