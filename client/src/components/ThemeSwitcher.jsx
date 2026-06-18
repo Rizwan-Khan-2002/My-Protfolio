@@ -41,7 +41,7 @@ const ThemeSwitcher = () => {
                         initial={{ opacity: 0, y: -8, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                        className="glass-card absolute right-0 mt-3 w-48 p-2 z-50 shadow-2xl"
+                        className="absolute right-0 mt-3 w-48 p-2 z-[60] rounded-2xl border border-white/15 bg-[#0d0d14]/95 backdrop-blur-xl shadow-2xl"
                     >
                         <p className="px-3 py-2 text-[10px] uppercase tracking-widest text-gray-400 font-bold">Theme</p>
                         {themes.map((t) => {

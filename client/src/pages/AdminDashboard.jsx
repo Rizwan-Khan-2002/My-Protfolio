@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import API from '../services/api';
-import { Users, Trash2, Shield, AlertTriangle, RefreshCw } from 'lucide-react';
+import { Trash2, Shield, AlertTriangle, RefreshCw, ArrowLeft } from 'lucide-react';
 
 const AdminDashboard = () => {
     const [users, setUsers] = useState([]);
@@ -40,10 +41,13 @@ const AdminDashboard = () => {
     );
 
     return (
-        <div className="pt-32 pb-12 px-6 max-w-6xl mx-auto">
-            <div className="flex justify-between items-center mb-12">
+        <div className="pt-28 sm:pt-32 pb-12 px-5 sm:px-6 max-w-6xl mx-auto">
+            <Link to="/dashboard" className="inline-flex items-center gap-2 text-white/60 hover:text-accent transition-colors mb-8 group">
+                <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Back to Dashboard
+            </Link>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-12">
                 <div>
-                    <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter flex items-center gap-4">
+                    <h1 className="text-3xl sm:text-4xl font-black text-white italic uppercase tracking-tighter flex items-center gap-4">
                         <Shield className="text-accent" size={32} /> Admin Control
                     </h1>
                     <p className="text-white/50 mt-2">Manage portfolio users and platform security</p>

@@ -29,13 +29,14 @@ const projectSchema = mongoose.Schema(
 );
 
 // Keep category <-> difficulty in sync so both new and legacy readers work.
-projectSchema.pre('save', function (next) {
+// NOTE: no `next` param — this Mongoose version does not pass next to hooks
+// (calling it throws "next is not a function" and breaks save).
+projectSchema.pre('save', function () {
     if (this.isModified('category') && this.category) {
         this.difficulty = this.category;
     } else if (this.isModified('difficulty') && this.difficulty && !this.isModified('category')) {
         this.category = this.difficulty;
     }
-    next();
 });
 
 const Project = mongoose.model('Project', projectSchema);
