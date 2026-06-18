@@ -41,9 +41,10 @@ const ThemeSwitcher = () => {
                         initial={{ opacity: 0, y: -8, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                        className="absolute right-0 mt-3 w-48 p-2 z-[60] rounded-2xl border border-white/15 bg-[#0d0d14]/95 backdrop-blur-xl shadow-2xl"
+                        style={{ color: '#e5e7eb' }}
+                        className="absolute right-0 mt-3 w-48 p-2 z-[60] rounded-2xl border border-white/15 bg-[#0d0d14] backdrop-blur-xl shadow-2xl"
                     >
-                        <p className="px-3 py-2 text-[10px] uppercase tracking-widest text-gray-400 font-bold">Theme</p>
+                        <p className="px-3 py-2 text-[10px] uppercase tracking-widest font-bold" style={{ color: '#9ca3af' }}>Theme</p>
                         {themes.map((t) => {
                             const Icon = ICONS[t.id] || Palette;
                             const active = theme === t.id;
@@ -51,8 +52,9 @@ const ThemeSwitcher = () => {
                                 <button
                                     key={t.id}
                                     onClick={() => { setTheme(t.id); setOpen(false); }}
+                                    style={{ color: active ? 'var(--color-secondary)' : '#e5e7eb' }}
                                     className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                                        active ? 'bg-secondary/15 text-secondary' : 'hover:bg-white/5'
+                                        active ? 'bg-secondary/20' : 'hover:bg-white/10'
                                     }`}
                                 >
                                     <span className="flex items-center gap-2">

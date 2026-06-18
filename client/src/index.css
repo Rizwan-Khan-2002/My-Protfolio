@@ -154,6 +154,14 @@ h1, h2, h3, h4, h5, h6 {
 /* Preloader stays dark intentionally; keep its black bg */
 :root[data-theme="light"] .bg-black { background-color: #0a0a0a !important; }
 
+/* Coloured buttons keep WHITE text in light theme (must come AFTER the
+   .text-white override so it wins). Otherwise label text turns dark and
+   disappears on the coloured background. */
+:root[data-theme="light"] .btn-primary,
+:root[data-theme="light"] .bg-secondary,
+:root[data-theme="light"] .bg-accent,
+:root[data-theme="light"] .bg-gradient-to-r { color: #ffffff !important; }
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--color-primary); }
