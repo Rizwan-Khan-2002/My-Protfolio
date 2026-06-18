@@ -1,11 +1,21 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
-import { ChevronRight, Github, Linkedin, MousePointer2 } from 'lucide-react';
+import { Github, Linkedin, Download } from 'lucide-react';
+import API from '../services/api';
+import ParticleField from './ParticleField';
 
 const Hero = () => {
     const heroRef = useRef(null);
-    const glowRef = useRef(null);
+    const [resumeUrl, setResumeUrl] = useState('/resume.jpg');
+
+    useEffect(() => {
+        let active = true;
+        API.get('/resume')
+            .then(({ data }) => { if (active && data?.resumeUrl) setResumeUrl(data.resumeUrl); })
+            .catch(() => { /* keep fallback */ });
+        return () => { active = false; };
+    }, []);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -53,6 +63,11 @@ const Hero = () => {
             <div className="absolute inset-0 z-0 pointer-events-none">
                 <div className="hero-glow bg-secondary/20 blur-[120px] top-1/4 -left-20 w-[500px] h-[500px] rounded-full mix-blend-screen" />
                 <div className="hero-glow bg-accent/20 blur-[120px] bottom-1/4 -right-20 w-[500px] h-[500px] rounded-full mix-blend-screen" />
+            </div>
+
+            {/* Animated particle field */}
+            <div className="absolute inset-0 z-0 opacity-60 pointer-events-none">
+                <ParticleField count={55} />
             </div>
 
             {/* Floating Elements Layer */}
@@ -106,8 +121,8 @@ const Hero = () => {
                     <a href="#projects" className="px-10 py-5 bg-white text-black font-black uppercase text-sm tracking-widest hover:bg-accent hover:text-white transition-all transform hover:-translate-y-1 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.1)]">
                         Explore Projects
                     </a>
-                    <a href="/resume.jpg" download="MD_Rizwan_Khan_Resume.jpg" className="px-10 py-5 bg-accent text-white font-black uppercase text-sm tracking-widest hover:bg-white hover:text-black transition-all transform hover:-translate-y-1 active:scale-95 shadow-[0_20px_40px_rgba(99,102,241,0.2)] flex items-center gap-2">
-                        Download Resume
+                    <a href={resumeUrl} target="_blank" rel="noopener noreferrer" download className="px-10 py-5 bg-accent text-white font-black uppercase text-sm tracking-widest hover:bg-white hover:text-black transition-all transform hover:-translate-y-1 active:scale-95 shadow-[0_20px_40px_rgba(99,102,241,0.2)] flex items-center gap-2">
+                        <Download size={18} /> Download Resume
                     </a>
                     <a href="#contact" className="px-10 py-5 bg-transparent border-2 border-white/20 text-white font-black uppercase text-sm tracking-widest hover:border-accent hover:text-accent transition-all transform hover:-translate-y-1 active:scale-95">
                         Build Together

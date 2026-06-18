@@ -1,166 +1,204 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
-import { LayoutDashboard, Plus, Settings, FolderKanban, Trash2, ExternalLink, Github } from 'lucide-react';
-import ProjectModal from '../components/ProjectModal';
+import { Link } from 'react-router-dom';
+import {
+    Plus, FolderKanban, Star, ShieldCheck, Trash2, Pencil, Eye,
+    ExternalLink, Github,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
+import ProjectModal from '../components/ProjectModal';
+import ConfirmModal from '../components/ConfirmModal';
+import ResumeManager from '../components/ResumeManager';
+import SmartImage from '../components/SmartImage';
 
 const Dashboard = () => {
     const { user } = useAuth();
     const [projects, setProjects] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editing, setEditing] = useState(null);
+    const [toDelete, setToDelete] = useState(null);
+    const [deleting, setDeleting] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
     const fetchProjects = async () => {
         try {
             setLoading(true);
             const { data } = await API.get('/projects');
-            // Filter projects to show only those belonging to the current user
-            const myProjects = data.filter(p => {
-                const projectUserId = p.user?._id?.toString() || p.user?.toString();
-                const currentUserId = user?._id?.toString();
-                return projectUserId === currentUserId;
-            });
-            setProjects(myProjects);
-            setLoading(false);
-        } catch (error) {
-            console.error('Failed to fetch projects:', error);
+            setProjects(Array.isArray(data) ? data : []);
+        } catch (err) {
+            console.error('Failed to fetch projects:', err);
+            setError('Failed to load projects');
+        } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => { fetchProjects(); }, []);
 
     const handleProjectSubmit = async (projectData) => {
         try {
-            await API.post('/projects', projectData);
+            if (editing) {
+                await API.put(`/projects/${editing._id}`, projectData);
+            } else {
+                await API.post('/projects', projectData);
+            }
             setIsModalOpen(false);
+            setEditing(null);
             fetchProjects();
-        } catch (error) {
-            alert(error.response?.data?.message || 'Failed to save project');
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to save project');
         }
     };
 
-    const deleteProject = async (id) => {
-        if (!window.confirm('Delete this project?')) return;
+    const confirmDelete = async () => {
+        if (!toDelete) return;
+        setDeleting(true);
         try {
-            await API.delete(`/projects/${id}`);
-            fetchProjects();
-        } catch (error) {
-            alert('Failed to delete project');
+            await API.delete(`/projects/${toDelete._id}`);
+            setProjects((prev) => prev.filter((p) => p._id !== toDelete._id));
+            setToDelete(null);
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to delete project');
+        } finally {
+            setDeleting(false);
         }
     };
 
-    useEffect(() => {
-        if (user) fetchProjects();
-    }, [user]);
+    const openNew = () => { setEditing(null); setIsModalOpen(true); };
+    const openEdit = (p) => { setEditing(p); setIsModalOpen(true); };
+
+    const stats = useMemo(() => ({
+        total: projects.length,
+        featured: projects.filter((p) => p.featured).length,
+        published: projects.filter((p) => (p.status || 'Published') === 'Published').length,
+    }), [projects]);
+
+    const fmt = (d) => (d ? new Date(d).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }) : '—');
 
     return (
-        <div className="min-h-screen pt-32 pb-24 px-6 container mx-auto">
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6">
+        <div className="min-h-screen pt-28 sm:pt-32 pb-24 px-4 sm:px-6 container mx-auto">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
                 <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-                    <h1 className="text-4xl font-orbitron mb-2">Welcome back, <span className="gradient-text">{user?.name}</span></h1>
-                    <p className="text-gray-400">Manage your projects and profile here.</p>
+                    <h1 className="text-3xl sm:text-4xl font-orbitron mb-2">Admin <span className="gradient-text">Dashboard</span></h1>
+                    <p className="text-gray-400">Welcome back, {user?.name}. Manage your projects & resume here.</p>
                 </motion.div>
-                <button 
-                    onClick={() => setIsModalOpen(true)}
-                    className="btn-primary flex items-center gap-2"
-                >
-                    <Plus className="w-5 h-5" />
-                    New Project
+                <button onClick={openNew} className="btn-primary flex items-center justify-center gap-2">
+                    <Plus className="w-5 h-5" /> New Project
                 </button>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 mb-12">
+            {/* Stats */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
                 <div className="glass-card p-6 flex items-center gap-4">
-                    <div className="p-3 bg-secondary/10 rounded-xl">
-                        <FolderKanban className="w-8 h-8 text-secondary" />
-                    </div>
-                    <div>
-                        <p className="text-gray-400 text-sm">Total Projects</p>
-                        <h3 className="text-2xl font-bold">{projects.length}</h3>
-                    </div>
+                    <div className="p-3 bg-secondary/10 rounded-xl"><FolderKanban className="w-7 h-7 text-secondary" /></div>
+                    <div><p className="text-gray-400 text-sm">Total Projects</p><h3 className="text-2xl font-bold">{stats.total}</h3></div>
                 </div>
-
-                <div className="glass-card p-6 flex items-center gap-4 text-white/30">
-                    <div className="p-3 bg-white/5 rounded-xl">
-                        <LayoutDashboard className="w-8 h-8" />
-                    </div>
-                    <div>
-                        <p className="text-sm">Activity</p>
-                        <h3 className="text-xl">Coming Soon</h3>
-                    </div>
-                </div>
-
                 <div className="glass-card p-6 flex items-center gap-4">
-                    <div className="p-3 bg-accent/10 rounded-xl">
-                        <Settings className="w-8 h-8 text-accent" />
-                    </div>
-                    <div>
-                        <p className="text-gray-400 text-sm">Account Type</p>
-                        <h3 className="text-2xl font-bold text-accent italic uppercase tracking-tighter">{user?.role}</h3>
-                    </div>
+                    <div className="p-3 bg-amber-500/10 rounded-xl"><Star className="w-7 h-7 text-amber-400" /></div>
+                    <div><p className="text-gray-400 text-sm">Featured</p><h3 className="text-2xl font-bold">{stats.featured}</h3></div>
+                </div>
+                <div className="glass-card p-6 flex items-center gap-4">
+                    <div className="p-3 bg-emerald-500/10 rounded-xl"><ShieldCheck className="w-7 h-7 text-emerald-400" /></div>
+                    <div><p className="text-gray-400 text-sm">Published</p><h3 className="text-2xl font-bold">{stats.published}</h3></div>
                 </div>
             </div>
 
+            {/* Resume management */}
+            <div className="mb-10">
+                <ResumeManager />
+            </div>
+
+            {/* Projects table */}
+            <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-orbitron">Manage Projects</h2>
+                <Link to="/admin" className="text-sm text-secondary hover:underline">Manage Users →</Link>
+            </div>
+
+            {error && <div className="bg-red-500/10 border border-red-500/40 p-4 rounded-xl text-red-400 mb-6">{error}</div>}
+
             {loading ? (
-                <div className="text-center py-20 text-gray-400">Loading projects...</div>
+                <div className="space-y-3">{[...Array(3)].map((_, i) => <div key={i} className="h-20 skeleton rounded-xl" />)}</div>
             ) : projects.length === 0 ? (
-                <div className="mt-12 glass-card p-8 border-dashed">
-                    <div className="text-center py-20">
-                        <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <Plus className="w-10 h-10 text-gray-600" />
-                        </div>
-                        <h3 className="text-xl font-orbitron mb-2">No Projects Found</h3>
-                        <p className="text-gray-400 mb-8">Start by adding your first project to your portfolio.</p>
-                        <button onClick={() => setIsModalOpen(true)} className="btn-outline">Add Project</button>
+                <div className="glass-card p-10 text-center border-dashed">
+                    <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-5">
+                        <Plus className="w-8 h-8 text-gray-600" />
                     </div>
+                    <h3 className="text-lg font-orbitron mb-2">No Projects Yet</h3>
+                    <p className="text-gray-400 mb-6">Add your first project to your portfolio.</p>
+                    <button onClick={openNew} className="btn-outline">Add Project</button>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {projects.map((project) => (
-                        <div key={project._id} className="glass-card group overflow-hidden">
-                            <div className="p-6">
-                                <div className="flex justify-between items-start mb-4">
-                                    <h3 className="text-xl font-orbitron font-bold group-hover:text-secondary transition-colors">{project.title}</h3>
-                                    <div className="flex gap-2">
-                                        <button 
-                                            onClick={() => deleteProject(project._id)}
-                                            className="p-2 text-red-500 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-all border border-red-500/20"
-                                            title="Delete Project"
-                                        >
-                                            <Trash2 size={20} />
-                                        </button>
-                                    </div>
-                                </div>
-                                <p className="text-gray-400 text-sm mb-6 line-clamp-3">{project.description}</p>
-                                <div className="flex flex-wrap gap-2 mb-6">
-                                    {project.techStack.map((tech, i) => (
-                                        <span key={i} className="text-[10px] uppercase font-bold px-2 py-1 bg-white/5 rounded-md border border-white/10 text-gray-300">
-                                            {tech}
-                                        </span>
-                                    ))}
-                                </div>
-                                <div className="flex gap-4 pt-4 border-t border-white/5">
-                                    {project.liveDemo && (
-                                        <a href={project.liveDemo} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs text-secondary hover:underline">
-                                            <ExternalLink size={14} /> Demo
-                                        </a>
-                                    )}
-                                    {project.githubRepo && (
-                                        <a href={project.githubRepo} target="_blank" rel="noreferrer" className="flex items-center gap-1 text-xs text-gray-400 hover:text-white transition-colors">
-                                            <Github size={14} /> Code
-                                        </a>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    ))}
+                <div className="glass-card overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse min-w-[720px]">
+                            <thead>
+                                <tr className="text-white/40 text-[11px] uppercase tracking-widest border-b border-white/10">
+                                    <th className="px-5 py-4 font-medium">Project</th>
+                                    <th className="px-5 py-4 font-medium">Category</th>
+                                    <th className="px-5 py-4 font-medium">Status</th>
+                                    <th className="px-5 py-4 font-medium">Created</th>
+                                    <th className="px-5 py-4 font-medium">Updated</th>
+                                    <th className="px-5 py-4 font-medium text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">
+                                {projects.map((p) => {
+                                    const cat = p.category || p.difficulty || 'Intermediate';
+                                    const status = p.status || 'Published';
+                                    return (
+                                        <tr key={p._id} className="hover:bg-white/[0.02] transition-colors">
+                                            <td className="px-5 py-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-16 h-11 rounded-md overflow-hidden border border-white/10 bg-white/5 shrink-0">
+                                                        <SmartImage src={p.image} alt={p.title} width={160} className="w-full h-full object-cover" />
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <div className="font-bold truncate max-w-[220px]">{p.title}</div>
+                                                        {p.featured && <span className="text-[10px] text-amber-400 uppercase tracking-widest font-bold">★ Featured</span>}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-5 py-4">
+                                                <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-accent/15 text-accent border border-accent/30">{cat}</span>
+                                            </td>
+                                            <td className="px-5 py-4">
+                                                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+                                                    status === 'Published' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' : 'bg-white/10 text-white/60 border-white/15'
+                                                }`}>{status}</span>
+                                            </td>
+                                            <td className="px-5 py-4 text-sm text-white/50">{fmt(p.createdAt)}</td>
+                                            <td className="px-5 py-4 text-sm text-white/50">{fmt(p.updatedAt)}</td>
+                                            <td className="px-5 py-4">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <Link to={`/project/${p._id}`} className="p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-colors" title="Preview"><Eye size={16} /></Link>
+                                                    <button onClick={() => openEdit(p)} className="p-2 rounded-lg bg-secondary/10 hover:bg-secondary/20 text-secondary border border-secondary/20 transition-colors" title="Edit"><Pencil size={16} /></button>
+                                                    <button onClick={() => setToDelete(p)} className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 transition-colors" title="Delete"><Trash2 size={16} /></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )}
 
-            <ProjectModal 
-                isOpen={isModalOpen} 
-                onClose={() => setIsModalOpen(false)} 
-                onSubmit={handleProjectSubmit} 
+            <ProjectModal
+                isOpen={isModalOpen}
+                onClose={() => { setIsModalOpen(false); setEditing(null); }}
+                onSubmit={handleProjectSubmit}
+                initialData={editing}
+            />
+            <ConfirmModal
+                isOpen={Boolean(toDelete)}
+                title="Delete Project?"
+                message={`“${toDelete?.title || ''}” and its image will be permanently removed.`}
+                onConfirm={confirmDelete}
+                onCancel={() => setToDelete(null)}
+                loading={deleting}
             />
         </div>
     );

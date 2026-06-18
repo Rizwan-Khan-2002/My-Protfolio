@@ -4,14 +4,18 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, ExternalLink, Github, Trophy, Trash2 } from 'lucide-react';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import SmartImage from '../components/SmartImage';
+import ConfirmModal from '../components/ConfirmModal';
 
 const ProjectDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { isAdmin } = useAuth();
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         const fetchProject = async () => {
@@ -30,12 +34,14 @@ const ProjectDetail = () => {
     }, [id]);
 
     const handleDelete = async () => {
-        if (!window.confirm('Are you sure you want to delete this project?')) return;
+        setDeleting(true);
         try {
             await API.delete(`/projects/${id}`);
             navigate('/');
         } catch (error) {
-            alert('Failed to delete project');
+            alert(error.response?.data?.message || 'Failed to delete project');
+            setDeleting(false);
+            setConfirmOpen(false);
         }
     };
 
@@ -53,11 +59,6 @@ const ProjectDetail = () => {
         </div>
     );
 
-    const isOwner = user && (
-        (project.user?._id?.toString() === user._id?.toString()) ||
-        (project.user?.toString() === user._id?.toString())
-    );
-
     return (
         <div className="pt-24 pb-12 px-6 max-w-7xl mx-auto">
             <Link to="/" className="inline-flex items-center gap-2 text-white/60 hover:text-accent transition-colors mb-8 group">
@@ -72,9 +73,9 @@ const ProjectDetail = () => {
                 >
                     <div className="flex justify-between items-start">
                         <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter">{project.title}</h1>
-                        {isOwner && (
-                            <button 
-                                onClick={handleDelete}
+                        {isAdmin && (
+                            <button
+                                onClick={() => setConfirmOpen(true)}
                                 className="p-3 bg-red-500/20 text-red-500 border border-red-500/40 hover:bg-red-500 hover:text-white rounded-xl transition-all flex items-center gap-2 group"
                                 title="Delete Project"
                             >
@@ -118,15 +119,25 @@ const ProjectDetail = () => {
                     className="space-y-8"
                 >
                     <div className="aspect-video rounded-3xl overflow-hidden border border-white/10 group shadow-2xl relative">
-                        <img 
-                            src={project.image || 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&q=80&w=2000'} 
-                            alt={project.title} 
+                        <SmartImage
+                            src={project.image}
+                            alt={project.title}
+                            width={1400}
                             className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-accent/10 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <div className="absolute inset-0 bg-accent/10 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                     </div>
                 </motion.div>
             </div>
+
+            <ConfirmModal
+                isOpen={confirmOpen}
+                title="Delete Project?"
+                message="This will permanently remove the project and its image."
+                onConfirm={handleDelete}
+                onCancel={() => setConfirmOpen(false)}
+                loading={deleting}
+            />
         </div>
     );
 };

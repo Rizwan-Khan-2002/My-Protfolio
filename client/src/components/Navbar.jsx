@@ -3,11 +3,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Rocket, User, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import ThemeSwitcher from './ThemeSwitcher';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const { user, logout } = useAuth();
+    const { user, isAdmin, logout } = useAuth();
     const location = useLocation();
 
     useEffect(() => {
@@ -43,23 +44,29 @@ const Navbar = () => {
                     ))}
                     {user ? (
                         <div className="flex items-center space-x-4">
-                            <Link to="/dashboard" className="flex items-center space-x-2 text-secondary hover:text-secondary-light font-semibold">
-                                <User className="w-5 h-5" />
-                                <span>Dashboard</span>
-                            </Link>
-                            <button onClick={logout} className="text-gray-400 hover:text-white transition-colors">
+                            {isAdmin && (
+                                <Link to="/dashboard" className="flex items-center space-x-2 text-secondary hover:text-secondary-light font-semibold">
+                                    <User className="w-5 h-5" />
+                                    <span>Dashboard</span>
+                                </Link>
+                            )}
+                            <button onClick={logout} className="text-gray-400 hover:text-white transition-colors" aria-label="Log out">
                                 <LogOut className="w-5 h-5" />
                             </button>
                         </div>
                     ) : (
                         <Link to="/login" className="btn-primary text-sm py-2 px-6">Login</Link>
                     )}
+                    <ThemeSwitcher />
                 </div>
 
-                {/* Mobile Menu Button */}
-                <button className="md:hidden text-white" onClick={() => setIsOpen(!isOpen)}>
-                    {isOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
-                </button>
+                {/* Mobile actions */}
+                <div className="md:hidden flex items-center gap-2">
+                    <ThemeSwitcher />
+                    <button className="text-white" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
+                        {isOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
+                    </button>
+                </div>
             </div>
 
             {/* Mobile Nav */}
@@ -83,8 +90,10 @@ const Navbar = () => {
                         ))}
                         {user ? (
                             <div className="pt-6 border-t border-white/10 space-y-4">
-                                <Link to="/dashboard" className="block text-secondary text-xl font-semibold" onClick={() => setIsOpen(false)}>Dashboard</Link>
-                                <button onClick={logout} className="block text-gray-400 text-xl">Logout</button>
+                                {isAdmin && (
+                                    <Link to="/dashboard" className="block text-secondary text-xl font-semibold" onClick={() => setIsOpen(false)}>Dashboard</Link>
+                                )}
+                                <button onClick={() => { logout(); setIsOpen(false); }} className="block text-gray-400 text-xl">Logout</button>
                             </div>
                         ) : (
                             <Link to="/login" className="block btn-primary text-center" onClick={() => setIsOpen(false)}>Login</Link>
