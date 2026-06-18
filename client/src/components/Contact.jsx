@@ -60,23 +60,17 @@ const Contact = () => {
                 </div>
 
                 <div className="grid lg:grid-cols-[0.7fr_1.3fr] gap-12 items-start relative">
-                    {/* Robot Mascot - Positioned between boxes */}
-                    <div className="absolute left-[33%] top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 hidden lg:block pointer-events-none">
-                        <motion.div 
-                            animate={{ 
-                                y: [-15, 15, -15],
-                            }}
-                            transition={{
-                                duration: 4,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                            }}
-                            className="w-48 h-48"
+                    {/* Robot Mascot - peeks in from the top-right, greeting visitors */}
+                    <div className="absolute right-2 xl:-right-6 -top-28 z-20 hidden lg:block pointer-events-none">
+                        <motion.div
+                            animate={{ y: [-10, 10, -10], rotate: [-3, 3, -3] }}
+                            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                            className="w-36 h-36 xl:w-44 xl:h-44"
                         >
-                            <TransparentImage 
-                                src={robotImg} 
-                                alt="Contact Robot" 
-                                className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(99,102,241,0.4)]" 
+                            <TransparentImage
+                                src={robotImg}
+                                alt="Contact Robot"
+                                className="w-full h-full object-contain filter drop-shadow-[0_0_25px_rgba(99,102,241,0.45)]"
                                 threshold={45}
                             />
                         </motion.div>
