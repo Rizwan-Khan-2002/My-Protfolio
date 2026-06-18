@@ -1,13 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Award, Briefcase, Zap, Download } from 'lucide-react';
+import { CheckCircle2, Award, Briefcase, Download } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import gsap from 'gsap';
 import API from '../services/api';
 import { mergeProfile } from '../data/profileDefaults';
 
 const About = () => {
     const [resumeUrl, setResumeUrl] = useState('/resume.pdf');
     const [profile, setProfile] = useState(mergeProfile(null));
+    const photoRef = useRef(null);
+    const stageRef = useRef(null);
+
+    // GSAP: gentle floating + entrance for the cutout photo.
+    useEffect(() => {
+        if (!photoRef.current) return;
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const ctx = gsap.context(() => {
+            gsap.fromTo(photoRef.current, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out' });
+            if (!reduce) {
+                gsap.to(photoRef.current, { y: '+=16', duration: 3, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+            }
+        }, stageRef);
+        return () => ctx.revert();
+    }, [profile.photoUrl]);
+
+    // Mouse-driven 3D tilt for the photo stage.
+    const handleTilt = (e) => {
+        const el = stageRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        gsap.to(el, { rotateY: px * 18, rotateX: -py * 18, duration: 0.5, ease: 'power2.out', transformPerspective: 900, transformOrigin: 'center' });
+    };
+    const resetTilt = () => { if (stageRef.current) gsap.to(stageRef.current, { rotateY: 0, rotateX: 0, duration: 0.6, ease: 'power2.out' }); };
 
     useEffect(() => {
         let active = true;
@@ -30,25 +57,34 @@ const About = () => {
         <section id="about" className="py-24 relative overflow-hidden">
             <div className="container mx-auto px-6">
                 <div className="flex flex-col lg:flex-row items-center gap-16">
-                    {/* Image / Visual Side */}
-                    <motion.div 
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        className="lg:w-1/2 relative group"
+                    {/* Image / Visual Side — floating cutout with GSAP 3D tilt */}
+                    <div
+                        className="lg:w-1/2 w-full flex justify-center"
+                        onMouseMove={handleTilt}
+                        onMouseLeave={resetTilt}
+                        style={{ perspective: '1000px' }}
                     >
-                        <div className="w-full aspect-square max-w-md mx-auto relative cursor-pointer">
-                            <div className="absolute inset-0 bg-secondary/20 rounded-3xl rotate-6 group-hover:rotate-12 transition-transform duration-500" />
-                            <div className="absolute inset-0 bg-accent/20 rounded-3xl -rotate-6 group-hover:-rotate-12 transition-transform duration-500" />
-                            <div className="absolute inset-0 bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl flex items-center justify-center p-8 overflow-hidden">
-                                <Zap className="w-32 h-32 text-secondary opacity-20 absolute top-0 right-0 -translate-y-1/2 translate-x-1/2" />
-                                <div className="text-center">
-                                    <h3 className="text-6xl font-black mb-2 gradient-text">MERN</h3>
-                                    <p className="text-gray-400 font-orbitron tracking-widest uppercase text-sm">Stack Specialist</p>
-                                </div>
+                        <div ref={stageRef} className="relative w-full max-w-sm sm:max-w-md aspect-[4/5]" style={{ transformStyle: 'preserve-3d' }}>
+                            {/* animated gradient blobs / rings behind */}
+                            <div className="absolute inset-6 rounded-[42%] bg-gradient-to-br from-secondary/40 to-accent/40 blur-3xl animate-pulse-slow" />
+                            <div className="absolute inset-0 rounded-[45%] border border-white/10 animate-float" />
+                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-3/4 h-6 bg-black/40 blur-2xl rounded-full" />
+
+                            {/* badge */}
+                            <div className="absolute -right-2 sm:right-2 top-6 z-20 glass-card px-4 py-2 text-center">
+                                <p className="text-lg font-black gradient-text leading-none">MERN</p>
+                                <p className="text-[9px] uppercase tracking-widest text-white/50">Developer</p>
                             </div>
+
+                            {/* the photo */}
+                            <img
+                                ref={photoRef}
+                                src="/profile-cutout.png"
+                                alt={profile.name}
+                                className="relative z-10 w-full h-full object-contain object-bottom drop-shadow-[0_25px_40px_rgba(0,0,0,0.5)]"
+                            />
                         </div>
-                    </motion.div>
+                    </div>
 
                     {/* Content Side */}
                     <motion.div 
