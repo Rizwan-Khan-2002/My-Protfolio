@@ -1,7 +1,6 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import WhatsAppButton from './components/WhatsAppButton';
 import Home from './pages/Home';
 import ProtectedRoute from './components/ProtectedRoute';
 import Preloader from './components/Preloader';
@@ -61,7 +60,6 @@ function App() {
                                 />
                             </Routes>
                         </Suspense>
-                        <WhatsAppButton />
                     </div>
                 </Router>
             </AuthProvider>
